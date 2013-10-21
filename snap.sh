@@ -3,10 +3,10 @@ bucket="mapbox-blog-testing";
 index='snap-index'
 
 function usage(){
-  echo -e "usage:\n ./upload image.png"; 
+  echo -e "usage:\n ./upload image.png";
 }
 
-if [[ -z $1 ]]; then usage; fi
+if [[ -z $1 ]]; then usage; exit 1; fi
 
 ### check for all dependencies
 
