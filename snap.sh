@@ -1,12 +1,24 @@
 #!/bin/bash
 bucket="mapbox-blog-testing";
 index='snap-index'
+md5tool='md5 -p'
 
-function usage(){
-  echo -e "usage:\n ./upload image.png"; 
+function setup(){
+    if [ `uname` == "Linux" ];
+    then
+        export md5tool=md5sum
+    fi
 }
 
-if [[ -z $1 ]]; then usage; fi
+function usage(){
+  echo -e "usage:\n ./upload image.png";
+}
+
+setup
+
+if [[ -z $1 ]]; then usage; exit 1; fi
+
+
 
 ### check for all dependencies
 
@@ -14,7 +26,6 @@ function check(){
    if ! which s3cmd > /dev/null; then echo -e "Please run:\n pip install s3cmd"; fi
    if ! which convert > /dev/null; then echo -e "Please run:\n pip install imagemagick"; fi
    if ! which jpegtran > /dev/null; then echo -e "Please run:\n brew install jpeg-turbo"; fi
-
 }
 
 if ! check >/dev/null; then check; exit 1; fi
@@ -23,7 +34,7 @@ function size_up(){
 
     #      generate a bunch of thumbnails and cropped subsets of input images
     img="$1";
-    uid=`md5 "$img" | awk -F'=' '{print $2}' | tr -d ' '`
+    uid=`$md5tool "$img" | awk '{print $1}'`
     mkdir -p $uid;
 
     ext=`echo "$img" | awk -F'.' '{ print $NF }'`
